@@ -1,0 +1,15 @@
+image:
+  repository: hbase-coprocessor-plugin
+  pullPolicy: IfNotPresent
+
+conf:
+  hbaseSite:
+    "hbase.coprocessor.region.classes": com.github.vitalibo.hbase.plugin.TestRegionCoprocessor
+
+hdfs:
+  enabled: true
+  persistence:
+    nameNode:
+      enabled: true
+    dataNode:
+      enabled: true
