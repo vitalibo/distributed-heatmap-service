@@ -12,4 +12,11 @@
 
     <artifactId>hbase-coprocessor-client</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
