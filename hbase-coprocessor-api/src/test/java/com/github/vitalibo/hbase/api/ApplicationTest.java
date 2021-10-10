@@ -1,4 +1,4 @@
-package com.github.vitalibo.hbase.client;
+package com.github.vitalibo.hbase.api;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.Test;

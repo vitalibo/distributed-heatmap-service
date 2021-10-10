@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: "hbase-coprocessor-client"
+  repository: "hbase-coprocessor-api"
   pullPolicy: IfNotPresent
   tag: ""
 

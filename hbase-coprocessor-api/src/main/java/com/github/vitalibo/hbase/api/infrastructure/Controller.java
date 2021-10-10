@@ -1,4 +1,4 @@
-package com.github.vitalibo.hbase.client.infrastructure;
+package com.github.vitalibo.hbase.api.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.github.vitalibo.hbase.client.core.model;
+package com.github.vitalibo.hbase.api.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

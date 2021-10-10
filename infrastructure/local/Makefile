@@ -14,7 +14,7 @@ help:
 .PHONY: install
 install:
     ifneq ($(minikube_status),Running)
-		minikube start --driver=virtualbox
+		minikube start --driver=virtualbox --dns-proxy=true
     endif
 
 	minikube update-context
@@ -25,7 +25,7 @@ install:
     endif
 
 	eval $$(minikube docker-env) && \
-	for module in 'plugin' 'client' ; do \
+	for module in 'plugin' 'api' ; do \
         docker build -t hbase-coprocessor-$$module:$(tag) $(CURDIR)/../../hbase-coprocessor-$$module/ ; \
     done
 

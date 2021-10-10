@@ -11,7 +11,7 @@
 
     <modules>
         <module>hbase-coprocessor-plugin</module>
-        <module>hbase-coprocessor-client</module>
+        <module>hbase-coprocessor-api</module>
     </modules>
 
     <properties>

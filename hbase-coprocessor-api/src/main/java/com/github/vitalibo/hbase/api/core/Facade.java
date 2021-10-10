@@ -1,7 +1,7 @@
-package com.github.vitalibo.hbase.client.core;
+package com.github.vitalibo.hbase.api.core;
 
-import com.github.vitalibo.hbase.client.core.model.HttpRequest;
-import com.github.vitalibo.hbase.client.core.model.HttpResponse;
+import com.github.vitalibo.hbase.api.core.model.HttpRequest;
+import com.github.vitalibo.hbase.api.core.model.HttpResponse;
 
 public interface Facade<Request, Response> {
 

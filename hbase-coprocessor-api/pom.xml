@@ -10,10 +10,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>hbase-coprocessor-client</artifactId>
+    <artifactId>hbase-coprocessor-api</artifactId>
 
     <properties>
-        <start-class>com.github.vitalibo.hbase.client.Application</start-class>
+        <start-class>com.github.vitalibo.hbase.api.Application</start-class>
         <dockerImage.tag>maven</dockerImage.tag>
     </properties>
 

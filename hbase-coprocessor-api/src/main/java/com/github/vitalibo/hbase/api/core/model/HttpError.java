@@ -1,4 +1,4 @@
-package com.github.vitalibo.hbase.client.core.model;
+package com.github.vitalibo.hbase.api.core.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
