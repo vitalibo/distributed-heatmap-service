@@ -1,15 +1,64 @@
+replicaCount: 1
+
 image:
-  repository: hbase-coprocessor-plugin
+  repository: "hbase-coprocessor-client"
   pullPolicy: IfNotPresent
+  tag: ""
 
-conf:
-  hbaseSite:
-    "hbase.coprocessor.region.classes": com.github.vitalibo.hbase.plugin.TestRegionCoprocessor
+imagePullSecrets: [ ]
+nameOverride: ""
+fullnameOverride: ""
 
-hdfs:
-  enabled: true
-  persistence:
-    nameNode:
-      enabled: true
+serviceAccount:
+  create: false
+  annotations: { }
+  name: ""
+
+podAnnotations: { }
+
+podSecurityContext: { }
+
+securityContext: { }
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: { }
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
+
+hbase:
+  image:
+    repository: "hbase-coprocessor-plugin"
+    pullPolicy: IfNotPresent
+  conf:
+    hbaseSite:
+      "hbase.coprocessor.region.classes": com.github.vitalibo.hbase.plugin.SumRegionCoprocessor
+  prometheus:
+    exporter:
+      enabled: false
+
+  hdfs:
+    enabled: true
+    conf:
+      hdfsSite:
+        dfs.replication: 1
     dataNode:
-      enabled: true
+      replicas: 1
+      pdbMinAvailable: 1
+    persistence:
+      nameNode:
+        enabled: true
+      dataNode:
+        enabled: true
+    prometheus:
+      exporter:
+        enabled: false

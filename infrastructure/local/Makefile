@@ -1,36 +1,37 @@
+package := true
+
 minikube_status := $(shell minikube status | grep host | cut -f 2 -d' ')
 tag := $(shell date | md5)
 
 .PHONY: help
 help:
-	@echo "Usage: make <install|port_forward|uninstall>"
+	@echo "Usage: make <install|uninstall> package=true|false"
 	@echo " "
 	@echo "Options:"
+	@echo "  package         Enable package maven project (Default: $(package))."
 	@echo " "
 
-.PHONY: package
-package:
-	mvn clean package -f $(CURDIR)/../../pom.xml
-
 .PHONY: install
-install: package
+install:
     ifneq ($(minikube_status),Running)
-		minikube start
+		minikube start --driver=virtualbox
     endif
 
 	minikube update-context
+
+    ifeq ($(package),true)
+		eval $$(minikube docker-env) && \
+		mvn clean package -f $(CURDIR)/../../pom.xml
+    endif
+
 	eval $$(minikube docker-env) && \
-	docker build -t hbase-coprocessor-plugin:$(tag) $(CURDIR)/../../hbase-coprocessor-plugin/
+	for module in 'plugin' 'client' ; do \
+        docker build -t hbase-coprocessor-$$module:$(tag) $(CURDIR)/../../hbase-coprocessor-$$module/ ; \
+    done
 
-	helm repo add bigdata-gradiant https://gradiant.github.io/bigdata-charts/
-	helm upgrade -i hbase bigdata-gradiant/hbase -f values.yaml --set image.tag=$(tag) --wait
-
-.PHONY: port_forward
-port_forward:
-	@echo 'open http://localhost:16010'
-	kubectl port-forward -n default svc/hbase-hbase-master 16010:16010
+	helm upgrade -i local . --set hbase.image.tag=$(tag) --set image.tag=$(tag) --wait
 
 .PHONY: uninstall
 uninstall:
-	helm uninstall hbase
-	kubectl delete pvc data-hbase-zookeeper-0 dfs-hbase-hdfs-namenode-0 dfs-hbase-hdfs-datanode-{0..2}
+	helm uninstall local
+	kubectl delete pvc data-local-zookeeper-0 dfs-local-hdfs-namenode-0 dfs-local-hdfs-datanode-0
