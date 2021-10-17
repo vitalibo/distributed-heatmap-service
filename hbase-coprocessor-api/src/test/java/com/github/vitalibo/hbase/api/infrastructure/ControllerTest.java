@@ -13,8 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.web.client.RestTemplate;
@@ -51,13 +50,17 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
     public void testPing() {
         Mockito.when(mockPingFacade.process(Mockito.any(HttpRequest.class)))
             .thenReturn(new HttpResponse<>(201, Collections.singletonMap("foo", "bar"), new PingResponse("pong")));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Header-Trace-RequestId", "6c48a00c-041a-4dd2-90ed-07818ac49d58");
 
-        ResponseEntity<String> actual = restClient.getForEntity(resourceUrl + "/ping?k=v", String.class);
+        ResponseEntity<String> actual = restClient.exchange(
+            resourceUrl + "/ping?k=v", HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         Assert.assertNotNull(actual);
         Assert.assertEquals(actual.getStatusCode(), HttpStatus.CREATED);
         Assert.assertEquals(actual.getBody(), "{\"message\":\"pong\"}");
         Assert.assertEquals(actual.getHeaders().get("foo"), Collections.singletonList("bar"));
+        Assert.assertEquals(actual.getHeaders().get("Request-Id"), Collections.singletonList("6c48a00c-041a-4dd2-90ed-07818ac49d58"));
         Mockito.verify(mockPingFacade).process(captorHttpRequest.capture());
         HttpRequest httpRequest = captorHttpRequest.getValue();
         Assert.assertEquals(httpRequest.getPath(), "/v1/ping");
