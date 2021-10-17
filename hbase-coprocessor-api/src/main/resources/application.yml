@@ -1,3 +1,6 @@
 logging:
   level:
     root: INFO
+spring:
+  jackson:
+    default-property-inclusion: non_null

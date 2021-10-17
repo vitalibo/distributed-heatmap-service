@@ -14,6 +14,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class Factory {
 
     @Bean
+    public PingFacade createPingFacade() {
+        return new PingFacade();
+    }
+
+    @Bean
     public WebMvcRegistrations createWebMvcRegistrations() {
         return new WebMvcRegistrations() {
             @Override
