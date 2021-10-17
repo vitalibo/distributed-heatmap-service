@@ -1,0 +1,14 @@
+{
+  "status": 400,
+  "message": "Bad Request",
+  "errors": {
+    "foo": [
+      "First error message.",
+      "Second error message."
+    ],
+    "startedAt": [
+      "Should be less or equals now."
+    ]
+  },
+  "requestId": "4fc42281-b638-43a6-b395-3e3c389c23c5"
+}
