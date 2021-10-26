@@ -3,8 +3,8 @@
   "message": "Bad Request",
   "errors": {
     "foo": [
-      "First error message.",
-      "Second error message."
+      "Second error message.",
+      "First error message."
     ],
     "startedAt": [
       "Should be less or equals now."

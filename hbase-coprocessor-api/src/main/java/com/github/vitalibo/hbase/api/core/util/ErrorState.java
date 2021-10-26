@@ -1,8 +1,8 @@
 package com.github.vitalibo.hbase.api.core.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public final class ErrorState extends HashMap<String, Collection<String>> {
 
@@ -11,7 +11,7 @@ public final class ErrorState extends HashMap<String, Collection<String>> {
     }
 
     public ErrorState addError(String field, String message) {
-        Collection<String> collection = this.computeIfAbsent(field, o -> new ArrayList<>());
+        Collection<String> collection = this.computeIfAbsent(field, o -> new HashSet<>());
         collection.add(message);
         return this;
     }

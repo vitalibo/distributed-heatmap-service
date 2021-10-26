@@ -6,6 +6,7 @@ import com.github.vitalibo.hbase.api.core.model.HttpResponse;
 import com.github.vitalibo.hbase.api.core.model.PingRequest;
 import com.github.vitalibo.hbase.api.core.model.PingResponse;
 import com.github.vitalibo.hbase.api.core.model.transform.PingRequestTranslator;
+import com.github.vitalibo.hbase.api.core.util.Rules;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Function;
@@ -14,13 +15,16 @@ import java.util.function.Function;
 public class PingFacade implements Facade<PingRequest, PingResponse> {
 
     private final Function<HttpRequest, PingRequest> pingRequestTranslator;
+    private final Rules<PingRequest> rules;
 
     public PingFacade() {
-        this(PingRequestTranslator::from);
+        this(PingRequestTranslator::from, new Rules<>());
     }
 
     @Override
     public HttpResponse<PingResponse> process(HttpRequest request) {
+        rules.verify(request);
+
         PingResponse response = process(
             pingRequestTranslator.apply(request));
 
@@ -29,6 +33,8 @@ public class PingFacade implements Facade<PingRequest, PingResponse> {
 
     @Override
     public PingResponse process(PingRequest request) {
+        rules.verify(request);
+
         return new PingResponse()
             .withMessage("pong");
     }
