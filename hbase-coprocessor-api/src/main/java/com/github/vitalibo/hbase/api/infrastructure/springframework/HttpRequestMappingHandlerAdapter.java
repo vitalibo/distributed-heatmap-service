@@ -1,5 +1,6 @@
 package com.github.vitalibo.hbase.api.infrastructure.springframework;
 
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -16,9 +17,12 @@ public class HttpRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
+        final List<HttpMessageConverter<?>> converters = getMessageConverters();
+        converters.add(new HeatmapHttpMessageConverter());
+
         final HttpRequestResponseEntityMethodProcessor handler =
             new HttpRequestResponseEntityMethodProcessor(
-                getMessageConverters(),
+                converters,
                 getField("contentNegotiationManager"),
                 getField("requestResponseBodyAdvice"));
 

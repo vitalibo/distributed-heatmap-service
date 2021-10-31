@@ -162,4 +162,15 @@
         </pluginManagement>
     </build>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>vitalibo-mvnrepo</id>
+            <url>https://raw.github.com/vitalibo/public-maven-repository/release/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
 </project>

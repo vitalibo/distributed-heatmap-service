@@ -1,5 +1,6 @@
 package com.github.vitalibo.hbase.api.infrastructure;
 
+import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
 import com.github.vitalibo.hbase.api.infrastructure.springframework.HttpRequestMappingHandlerAdapter;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
@@ -19,6 +20,13 @@ public class FactoryTest {
     @Test
     public void testCreatePingFacade() {
         PingFacade actual = factory.createPingFacade();
+
+        Assert.assertNotNull(actual);
+    }
+
+    @Test
+    public void testCreateHeatmapFacade() {
+        HeatmapFacade actual = factory.createHeatmapFacade();
 
         Assert.assertNotNull(actual);
     }

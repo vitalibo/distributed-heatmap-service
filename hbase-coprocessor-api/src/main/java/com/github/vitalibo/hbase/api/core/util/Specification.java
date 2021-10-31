@@ -11,7 +11,7 @@ public interface Specification<T> extends BiConsumer<T, Consumer<String>> {
     default Specification<T> and(Specification<T> that) {
         final Specification<T> self = this;
         return (obj, consumer) -> {
-            final boolean[] hasError = new boolean[]{false};
+            final boolean[] hasError = {false};
             self.accept(obj, error -> {
                 hasError[0] = true;
                 consumer.accept(error);
@@ -33,7 +33,7 @@ public interface Specification<T> extends BiConsumer<T, Consumer<String>> {
                 return;
             }
 
-            final boolean[] hasError = new boolean[]{false};
+            final boolean[] hasError = {false};
             that.accept(obj, error -> {
                 hasError[0] = true;
                 consumer.accept(error);
