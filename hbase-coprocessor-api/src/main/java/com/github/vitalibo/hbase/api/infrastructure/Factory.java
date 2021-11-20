@@ -3,10 +3,16 @@ package com.github.vitalibo.hbase.api.infrastructure;
 import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
 import com.github.vitalibo.hbase.api.core.math.HeatmapRenderer;
-import com.github.vitalibo.hbase.api.infrastructure.mock.RandomHeatmapRepository;
+import com.github.vitalibo.hbase.api.infrastructure.hbase.HBaseRepository;
 import com.github.vitalibo.hbase.api.infrastructure.springframework.HttpRequestMappingHandlerAdapter;
 import com.github.vitalibo.hbase.api.infrastructure.springframework.RequestTracingFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
@@ -26,8 +32,12 @@ public class Factory {
     }
 
     @Bean
-    public HeatmapFacade createHeatmapFacade() {
-        return new HeatmapFacade(new RandomHeatmapRepository(), new HeatmapRenderer());
+    public HeatmapFacade createHeatmapFacade(@Value("${hbase.zookeeper.quorum}") String hbaseZookeeperQuorum,
+                                             @Value("${hbase.heatmap.table-name}") String hbaseHeatmapTable) {
+        return new HeatmapFacade(
+            createHBaseRepository(
+                hbaseZookeeperQuorum, hbaseHeatmapTable),
+            new HeatmapRenderer());
     }
 
     @Bean
@@ -47,6 +57,15 @@ public class Factory {
         bean.setFilter(new RequestTracingFilter(incomingHeader));
         bean.setOrder(1);
         return bean;
+    }
+
+    @SneakyThrows
+    private static HBaseRepository createHBaseRepository(String zookeeperQuorum, String tableName) {
+        final org.apache.hadoop.conf.Configuration configuration = HBaseConfiguration.create();
+        configuration.set("hbase.zookeeper.quorum", zookeeperQuorum);
+        Connection connection = ConnectionFactory.createConnection(configuration);
+        Table table = connection.getTable(TableName.valueOf(tableName));
+        return new HBaseRepository(table);
     }
 
 }

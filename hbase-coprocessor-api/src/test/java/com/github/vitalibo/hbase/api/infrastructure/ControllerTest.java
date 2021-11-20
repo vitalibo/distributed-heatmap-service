@@ -18,7 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.web.client.HttpClientErrorException;
@@ -81,7 +85,7 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(httpRequest.getQueryStringParameters(), Collections.singletonMap("k", "v"));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testHeatmap() throws IOException {
         Mockito.when(mockHeatmapFacade.process(Mockito.any(HttpRequest.class)))
             .thenReturn(new HttpResponse<>(200, new HeatmapResponse(

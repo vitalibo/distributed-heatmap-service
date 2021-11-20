@@ -16,3 +16,9 @@ logging:
     root: INFO
   tracing:
     header: 'X-Header-Trace-RequestId'
+
+hbase:
+  zookeeper:
+    quorum: "local-zookeeper.default.svc.cluster.local"
+  heatmap:
+    table-name: "HEATMAP"

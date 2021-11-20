@@ -39,9 +39,6 @@ hbase:
   image:
     repository: "hbase-coprocessor-plugin"
     pullPolicy: IfNotPresent
-  conf:
-    hbaseSite:
-      "hbase.coprocessor.region.classes": com.github.vitalibo.hbase.plugin.SumRegionCoprocessor
   prometheus:
     exporter:
       enabled: false

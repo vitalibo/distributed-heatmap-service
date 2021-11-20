@@ -14,14 +14,14 @@ help:
 .PHONY: install
 install:
     ifneq ($(minikube_status),Running)
-		minikube start --driver=virtualbox --dns-proxy=true
+		minikube start --driver=hyperkit
     endif
 
 	minikube update-context
 
     ifeq ($(package),true)
 		eval $$(minikube docker-env) && \
-		mvn clean package -f $(CURDIR)/../../pom.xml
+		mvn clean package -Dmaven.test.skip=true -f $(CURDIR)/../../pom.xml
     endif
 
 	eval $$(minikube docker-env) && \

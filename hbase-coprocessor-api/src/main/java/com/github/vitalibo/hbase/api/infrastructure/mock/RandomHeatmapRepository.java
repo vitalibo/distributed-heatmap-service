@@ -21,12 +21,12 @@ public class RandomHeatmapRepository implements Repository {
     @Override
     public Heatmap queryByRange(HeatmapRangeQuery query) {
         final Random random = new Random(query.getId());
-        final double[][] score = new double[width][height];
+        final double[][] score = new double[height][width];
 
         LocalDateTime timestamp = query.getFrom();
         while (timestamp.isBefore(query.getUnit())) {
             timestamp = timestamp.plusMinutes(1);
-            score[random.nextInt(width)][random.nextInt(height)] = random.nextDouble();
+            score[random.nextInt(height)][random.nextInt(width)] = random.nextDouble();
         }
 
         return new Heatmap()

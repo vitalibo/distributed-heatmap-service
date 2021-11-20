@@ -67,7 +67,7 @@ public class HeatmapRenderer implements Renderer {
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    double score = heatmap[x][y];
+                    double score = heatmap[y][x];
 
                     if (score > 0) {
                         double opaque = Math.min((score / maxScore) * opacity, 1.0);

@@ -30,8 +30,8 @@ public class RandomHeatmapRepositoryTest {
         Assert.assertEquals(count, 8);
         double[][] score = actual.getScore();
         Assert.assertEquals(score[5][8], 0.41008081149220166);
-        Assert.assertEquals(score[12][2], 0.9370821488959696);
-        Assert.assertEquals(score[16][2], 0.34751802920311026);
+        Assert.assertEquals(score[2][2], 0.9370821488959696);
+        Assert.assertEquals(score[6][12], 0.34751802920311026);
     }
 
 }
