@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.vitalibo</groupId>
-    <artifactId>hbase-coprocessor</artifactId>
+    <artifactId>distributed-heatmap-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>hbase-coprocessor-plugin</module>
-        <module>hbase-coprocessor-api</module>
+        <module>heatmap-hbase</module>
+        <module>heatmap-api</module>
     </modules>
 
     <properties>

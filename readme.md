@@ -1,1 +1,2 @@
-# HBase Coprocessor
+# Distributed Heatmap Service
+

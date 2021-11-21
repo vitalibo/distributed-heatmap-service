@@ -25,8 +25,8 @@ install:
     endif
 
 	eval $$(minikube docker-env) && \
-	for module in 'plugin' 'api' ; do \
-        docker build -t hbase-coprocessor-$$module:$(tag) $(CURDIR)/../../hbase-coprocessor-$$module/ ; \
+	for module in 'hbase' 'api' ; do \
+        docker build -t heatmap-$$module:$(tag) $(CURDIR)/../../heatmap-$$module/ ; \
     done
 
 	helm upgrade -i local . --set hbase.image.tag=$(tag) --set image.tag=$(tag) --wait
