@@ -3,9 +3,9 @@ package com.github.vitalibo.heatmap.api.core.facade;
 import com.github.vitalibo.heatmap.api.core.Renderer;
 import com.github.vitalibo.heatmap.api.core.Repository;
 import com.github.vitalibo.heatmap.api.core.model.Heatmap;
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageRequest;
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageResponse;
 import com.github.vitalibo.heatmap.api.core.model.HeatmapRangeQuery;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapRequest;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapResponse;
 import com.github.vitalibo.heatmap.api.core.model.HttpRequest;
 import com.github.vitalibo.heatmap.api.core.model.HttpResponse;
 import com.github.vitalibo.heatmap.api.core.util.ErrorState;
@@ -28,16 +28,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Function;
 
-public class HeatmapFacadeTest {
+public class HeatmapImageFacadeTest {
 
     @Mock
     private Repository mockRepository;
     @Mock
     private Renderer mockRenderer;
     @Mock
-    private Function<HttpRequest, HeatmapRequest> mockTranslator;
+    private Function<HttpRequest, HeatmapImageRequest> mockTranslator;
     @Mock
-    private Rules<HeatmapRequest> mockRules;
+    private Rules<HeatmapImageRequest> mockRules;
     @Mock
     private BufferedImage mockBufferedImage;
     @Mock
@@ -45,28 +45,28 @@ public class HeatmapFacadeTest {
     @Captor
     private ArgumentCaptor<HeatmapRangeQuery> captorHeatmapRangeQuery;
 
-    private HeatmapFacade spyFacade;
+    private HeatmapImageFacade spyFacade;
 
     @BeforeMethod
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        spyFacade = Mockito.spy(new HeatmapFacade(mockTranslator, mockRules, mockRepository, mockRenderer));
+        spyFacade = Mockito.spy(new HeatmapImageFacade(mockTranslator, mockRules, mockRepository, mockRenderer));
     }
 
     @Test
     public void testHttpProcess() {
-        HeatmapResponse heatmapResponse = new HeatmapResponse();
-        HeatmapRequest heatmapRequest = new HeatmapRequest();
+        HeatmapImageResponse heatmapResponse = new HeatmapImageResponse();
+        HeatmapImageRequest heatmapRequest = new HeatmapImageRequest();
         heatmapRequest.setId(123L);
         Mockito.doReturn(heatmapResponse)
-            .when(spyFacade).process(Mockito.any(HeatmapRequest.class));
+            .when(spyFacade).process(Mockito.any(HeatmapImageRequest.class));
         Mockito.when(mockTranslator.apply(Mockito.any())).thenReturn(heatmapRequest);
         HttpRequest httpRequest = new HttpRequest();
         Map<String, String> params = new HashMap<>();
         params.put("id", "123");
         httpRequest.setQueryStringParameters(params);
 
-        HttpResponse<HeatmapResponse> actual = spyFacade.process(httpRequest);
+        HttpResponse<HeatmapImageResponse> actual = spyFacade.process(httpRequest);
 
         Assert.assertNotNull(actual);
         Assert.assertSame(actual.getBody(), heatmapResponse);
@@ -76,10 +76,10 @@ public class HeatmapFacadeTest {
 
     @Test
     public void testHttpProcessVerify() {
-        spyFacade = Mockito.spy(new HeatmapFacade(mockRepository, mockRenderer));
-        HeatmapResponse heatmapResponse = new HeatmapResponse();
+        spyFacade = Mockito.spy(new HeatmapImageFacade(mockRepository, mockRenderer));
+        HeatmapImageResponse heatmapResponse = new HeatmapImageResponse();
         Mockito.doReturn(heatmapResponse)
-            .when(spyFacade).process(Mockito.any(HeatmapRequest.class));
+            .when(spyFacade).process(Mockito.any(HeatmapImageRequest.class));
         HttpRequest httpRequest = new HttpRequest();
         Map<String, String> params = new HashMap<>();
         params.put("radius", "null");
@@ -100,14 +100,14 @@ public class HeatmapFacadeTest {
         Mockito.when(mockRenderer.render(Mockito.any(), Mockito.anyInt(), Mockito.anyDouble()))
             .thenReturn(mockBufferedImage);
         Mockito.when(mockRepository.queryByRange(Mockito.any())).thenReturn(mockHeatmap);
-        HeatmapRequest request = new HeatmapRequest();
+        HeatmapImageRequest request = new HeatmapImageRequest();
         request.setId(123L);
         request.setFrom(LocalDateTime.parse("2021-10-31T19:34:15"));
         request.setUnit(LocalDateTime.parse("2021-11-01T01:24:08"));
         request.setRadius(64);
         request.setOpacity(0.5);
 
-        HeatmapResponse actual = spyFacade.process(request);
+        HeatmapImageResponse actual = spyFacade.process(request);
 
         Assert.assertNotNull(actual);
         Assert.assertEquals(actual.getCanvas(), mockBufferedImage);

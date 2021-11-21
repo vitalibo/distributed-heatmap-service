@@ -1,7 +1,7 @@
 package com.github.vitalibo.heatmap.api.infrastructure.springframework;
 
 import com.github.vitalibo.heatmap.api.core.model.Heatmap;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapResponse;
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageResponse;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -40,7 +40,7 @@ public class HeatmapHttpMessageConverterTest {
 
     @Test
     public void testSupports() {
-        boolean actual = converter.supports(HeatmapResponse.class);
+        boolean actual = converter.supports(HeatmapImageResponse.class);
 
         Assert.assertTrue(actual);
     }
@@ -66,7 +66,7 @@ public class HeatmapHttpMessageConverterTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Mockito.when(mockHttpOutputMessage.getBody()).thenReturn(baos);
 
-        converter.writeInternal(new HeatmapResponse(img), mockHttpOutputMessage);
+        converter.writeInternal(new HeatmapImageResponse(img), mockHttpOutputMessage);
 
         byte[] actual = baos.toByteArray();
         Assert.assertNotNull(actual);

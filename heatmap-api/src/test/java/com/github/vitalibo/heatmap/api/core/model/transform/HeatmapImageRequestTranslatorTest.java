@@ -1,6 +1,6 @@
 package com.github.vitalibo.heatmap.api.core.model.transform;
 
-import com.github.vitalibo.heatmap.api.core.model.HeatmapRequest;
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageRequest;
 import com.github.vitalibo.heatmap.api.core.model.HttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeatmapRequestTranslatorTest {
+public class HeatmapImageRequestTranslatorTest {
 
     @Test
     public void testFrom() {
@@ -22,7 +22,7 @@ public class HeatmapRequestTranslatorTest {
         params.put("radius", "32");
         request.setQueryStringParameters(params);
 
-        HeatmapRequest actual = HeatmapRequestTranslator.from(request);
+        HeatmapImageRequest actual = HeatmapImageRequestTranslator.from(request);
 
         Assert.assertNotNull(actual);
         Assert.assertEquals(actual.getId(), (Long) 123L);
@@ -41,7 +41,7 @@ public class HeatmapRequestTranslatorTest {
         params.put("until", "2021-10-31T19:39:21Z");
         request.setQueryStringParameters(params);
 
-        HeatmapRequest actual = HeatmapRequestTranslator.from(request);
+        HeatmapImageRequest actual = HeatmapImageRequestTranslator.from(request);
 
         Assert.assertNotNull(actual);
         Assert.assertEquals(actual.getId(), (Long) 123L);

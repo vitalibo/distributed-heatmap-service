@@ -1,7 +1,7 @@
 package com.github.vitalibo.heatmap.api.core;
 
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageRequest;
 import com.github.vitalibo.heatmap.api.core.model.HeatmapJsonRequest;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapRequest;
 import com.github.vitalibo.heatmap.api.core.model.HttpRequest;
 import com.github.vitalibo.heatmap.api.core.util.Rule;
 import com.github.vitalibo.heatmap.api.core.util.Specification;
@@ -76,7 +76,7 @@ public final class ValidationRules {
             rule.accept(request.getQueryStringParameters().get("opacity"), errorState);
     }
 
-    public static Rule<HttpRequest> verifyHeatmapRequestSupportedQueryParameters() {
+    public static Rule<HttpRequest> verifyHeatmapImageRequestSupportedQueryParameters() {
         Rule<Collection<String>> rule = verifySupportedParameters(
             "id", "from", "until", "radius", "opacity");
 
@@ -92,8 +92,8 @@ public final class ValidationRules {
             rule.accept(request.getQueryStringParameters().keySet(), errorState);
     }
 
-    public static Rule<HeatmapRequest> verifyHeatmapRequestFromIsBeforeUntil() {
-        return ValidationRules.<HeatmapRequest>requiredNotNull()
+    public static Rule<HeatmapImageRequest> verifyHeatmapImageRequestFromIsBeforeUntil() {
+        return ValidationRules.<HeatmapImageRequest>requiredNotNull()
             .and((request, consumer) -> {
                 if (!request.getFrom().isBefore(request.getUnit())) {
                     consumer.accept("The field value should be before 'until' timestamp.");
@@ -112,7 +112,7 @@ public final class ValidationRules {
             .named("from");
     }
 
-    public static Rule<HeatmapRequest> verifyOpacity() {
+    public static Rule<HeatmapImageRequest> verifyOpacity() {
         Rule<Double> rule = ValidationRules.<Double>requiredNotNull()
             .and(ValidationRules.requiredBetween(0.0, 1.0))
             .named("opacity");
@@ -121,7 +121,7 @@ public final class ValidationRules {
             rule.accept(request.getOpacity(), errorState);
     }
 
-    public static Rule<HeatmapRequest> verifyRadius() {
+    public static Rule<HeatmapImageRequest> verifyRadius() {
         Rule<Integer> rule = ValidationRules.<Integer>requiredNotNull()
             .and(ValidationRules.requiredBetween(8, 128))
             .named("radius");

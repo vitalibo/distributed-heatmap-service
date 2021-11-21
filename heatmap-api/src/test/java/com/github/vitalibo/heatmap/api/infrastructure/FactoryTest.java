@@ -1,6 +1,6 @@
 package com.github.vitalibo.heatmap.api.infrastructure;
 
-import com.github.vitalibo.heatmap.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.heatmap.api.core.facade.HeatmapImageFacade;
 import com.github.vitalibo.heatmap.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.heatmap.api.core.facade.PingFacade;
 import com.github.vitalibo.heatmap.api.infrastructure.springframework.HttpRequestMappingHandlerAdapter;
@@ -44,9 +44,9 @@ public class FactoryTest {
     }
 
     @Test
-    public void testCreateHeatmapFacade() {
+    public void testCreateHeatmapImageFacade() {
         Address address = zookeeperCluster.getAddress();
-        HeatmapFacade actual = factory.createHeatmapFacade(
+        HeatmapImageFacade actual = factory.createHeatmapImageFacade(
             address.getHostname() + ":" + address.getPort(), "foo");
 
         Assert.assertNotNull(actual);

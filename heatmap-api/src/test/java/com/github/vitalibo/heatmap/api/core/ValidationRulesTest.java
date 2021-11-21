@@ -1,7 +1,7 @@
 package com.github.vitalibo.heatmap.api.core;
 
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageRequest;
 import com.github.vitalibo.heatmap.api.core.model.HeatmapJsonRequest;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapRequest;
 import com.github.vitalibo.heatmap.api.core.model.HttpRequest;
 import com.github.vitalibo.heatmap.api.core.util.ErrorState;
 import com.github.vitalibo.heatmap.api.core.util.Rule;
@@ -384,10 +384,10 @@ public class ValidationRulesTest {
     }
 
     @Test(dataProvider = "sampleHeatmapRequestSupportedQueryParameters")
-    public void testVerifyHeatmapRequestSupportedQueryParameters(String column, List<String> expected) {
+    public void testVerifyHeatmapImageRequestSupportedQueryParameters(String column, List<String> expected) {
         HttpRequest request = new HttpRequest();
         request.setQueryStringParameters(Collections.singletonMap(column, "foo"));
-        Rule<HttpRequest> rule = ValidationRules.verifyHeatmapRequestSupportedQueryParameters();
+        Rule<HttpRequest> rule = ValidationRules.verifyHeatmapImageRequestSupportedQueryParameters();
         ErrorState errorState = new ErrorState();
 
         rule.accept(request, errorState);
@@ -433,11 +433,11 @@ public class ValidationRulesTest {
     }
 
     @Test(dataProvider = "sampleFromIsBeforeUntil")
-    public void testVerifyHeatmapRequestFromIsBeforeUntil(String from, String until, List<String> expected) {
-        HeatmapRequest request = new HeatmapRequest();
+    public void testVerifyHeatmapImageRequestFromIsBeforeUntil(String from, String until, List<String> expected) {
+        HeatmapImageRequest request = new HeatmapImageRequest();
         request.setFrom(LocalDateTime.parse(from, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         request.setUnit(LocalDateTime.parse(until, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        Rule<HeatmapRequest> rule = ValidationRules.verifyHeatmapRequestFromIsBeforeUntil();
+        Rule<HeatmapImageRequest> rule = ValidationRules.verifyHeatmapImageRequestFromIsBeforeUntil();
         ErrorState errorState = new ErrorState();
 
         rule.accept(request, errorState);
@@ -475,9 +475,9 @@ public class ValidationRulesTest {
 
     @Test(dataProvider = "sampleOpacity")
     public void testVerifyOpacity(Double opacity, List<String> expected) {
-        HeatmapRequest request = new HeatmapRequest();
+        HeatmapImageRequest request = new HeatmapImageRequest();
         request.setOpacity(opacity);
-        Rule<HeatmapRequest> rule = ValidationRules.verifyOpacity();
+        Rule<HeatmapImageRequest> rule = ValidationRules.verifyOpacity();
         ErrorState errorState = new ErrorState();
 
         rule.accept(request, errorState);
@@ -500,9 +500,9 @@ public class ValidationRulesTest {
 
     @Test(dataProvider = "sampleRadius")
     public void testVerifyRadius(Integer radius, List<String> expected) {
-        HeatmapRequest request = new HeatmapRequest();
+        HeatmapImageRequest request = new HeatmapImageRequest();
         request.setRadius(radius);
-        Rule<HeatmapRequest> rule = ValidationRules.verifyRadius();
+        Rule<HeatmapImageRequest> rule = ValidationRules.verifyRadius();
         ErrorState errorState = new ErrorState();
 
         rule.accept(request, errorState);

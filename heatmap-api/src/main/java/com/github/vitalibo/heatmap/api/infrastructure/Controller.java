@@ -1,10 +1,10 @@
 package com.github.vitalibo.heatmap.api.infrastructure;
 
-import com.github.vitalibo.heatmap.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.heatmap.api.core.facade.HeatmapImageFacade;
 import com.github.vitalibo.heatmap.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.heatmap.api.core.facade.PingFacade;
+import com.github.vitalibo.heatmap.api.core.model.HeatmapImageResponse;
 import com.github.vitalibo.heatmap.api.core.model.HeatmapJsonResponse;
-import com.github.vitalibo.heatmap.api.core.model.HeatmapResponse;
 import com.github.vitalibo.heatmap.api.core.model.HttpRequest;
 import com.github.vitalibo.heatmap.api.core.model.HttpResponse;
 import com.github.vitalibo.heatmap.api.core.model.PingResponse;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
 
     private final PingFacade pingFacade;
-    private final HeatmapFacade heatmapFacade;
+    private final HeatmapImageFacade heatmapImageFacade;
     private final HeatmapJsonFacade heatmapJsonFacade;
 
     @GetMapping(value = "ping", produces = "application/json")
@@ -29,8 +29,8 @@ public class Controller {
     }
 
     @GetMapping(value = "heatmap", consumes = "image/png", produces = "image/png")
-    public HttpResponse<HeatmapResponse> heatmap(HttpRequest request) {
-        return heatmapFacade.process(request);
+    public HttpResponse<HeatmapImageResponse> heatmapImage(HttpRequest request) {
+        return heatmapImageFacade.process(request);
     }
 
     @GetMapping(value = "heatmap", produces = "application/json")

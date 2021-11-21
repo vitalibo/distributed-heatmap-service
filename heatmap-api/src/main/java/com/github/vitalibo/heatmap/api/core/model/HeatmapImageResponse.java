@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 @With
 @NoArgsConstructor
 @AllArgsConstructor
-public class HeatmapResponse {
+public class HeatmapImageResponse {
 
     private BufferedImage canvas;
 

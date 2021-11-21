@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @With
 @NoArgsConstructor
 @AllArgsConstructor
-public class HeatmapRequest {
+public class HeatmapImageRequest {
 
     private Long id;
     private Double opacity;
