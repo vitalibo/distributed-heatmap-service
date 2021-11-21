@@ -1,7 +1,9 @@
 package com.github.vitalibo.hbase.api.infrastructure;
 
 import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.hbase.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
+import com.github.vitalibo.hbase.api.core.model.HeatmapJsonResponse;
 import com.github.vitalibo.hbase.api.core.model.HeatmapResponse;
 import com.github.vitalibo.hbase.api.core.model.HttpRequest;
 import com.github.vitalibo.hbase.api.core.model.HttpResponse;
@@ -19,15 +21,21 @@ public class Controller {
 
     private final PingFacade pingFacade;
     private final HeatmapFacade heatmapFacade;
+    private final HeatmapJsonFacade heatmapJsonFacade;
 
     @GetMapping(value = "ping", produces = "application/json")
     public HttpResponse<PingResponse> ping(HttpRequest request) {
         return pingFacade.process(request);
     }
 
-    @GetMapping(value = "heatmap", produces = "image/png")
+    @GetMapping(value = "heatmap", consumes = "image/png", produces = "image/png")
     public HttpResponse<HeatmapResponse> heatmap(HttpRequest request) {
         return heatmapFacade.process(request);
+    }
+
+    @GetMapping(value = "heatmap", produces = "application/json")
+    public HttpResponse<HeatmapJsonResponse> heatmapJson(HttpRequest request) {
+        return heatmapJsonFacade.process(request);
     }
 
 }

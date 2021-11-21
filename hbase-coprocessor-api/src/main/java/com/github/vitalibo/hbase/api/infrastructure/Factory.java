@@ -1,6 +1,7 @@
 package com.github.vitalibo.hbase.api.infrastructure;
 
 import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.hbase.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
 import com.github.vitalibo.hbase.api.core.math.HeatmapRenderer;
 import com.github.vitalibo.hbase.api.infrastructure.hbase.HBaseRepository;
@@ -38,6 +39,16 @@ public class Factory {
             createHBaseRepository(
                 hbaseZookeeperQuorum, hbaseHeatmapTable),
             new HeatmapRenderer());
+    }
+
+    @Bean
+    public HeatmapJsonFacade createHeatmapJsonFacade(@Value("${hbase.zookeeper.quorum}") String hbaseZookeeperQuorum,
+                                                     @Value("${hbase.heatmap.table-name}") String hbaseHeatmapTable,
+                                                     @Value("${heatmap.sparse.threshold}") double sparseHeatmapThreshold) {
+        return new HeatmapJsonFacade(
+            createHBaseRepository(
+                hbaseZookeeperQuorum, hbaseHeatmapTable),
+            sparseHeatmapThreshold);
     }
 
     @Bean

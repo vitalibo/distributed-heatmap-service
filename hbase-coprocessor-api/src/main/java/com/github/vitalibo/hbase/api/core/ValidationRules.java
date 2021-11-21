@@ -1,5 +1,6 @@
 package com.github.vitalibo.hbase.api.core;
 
+import com.github.vitalibo.hbase.api.core.model.HeatmapJsonRequest;
 import com.github.vitalibo.hbase.api.core.model.HeatmapRequest;
 import com.github.vitalibo.hbase.api.core.model.HttpRequest;
 import com.github.vitalibo.hbase.api.core.util.Rule;
@@ -8,7 +9,11 @@ import com.github.vitalibo.hbase.api.core.util.Specification;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,8 +84,26 @@ public final class ValidationRules {
             rule.accept(request.getQueryStringParameters().keySet(), errorState);
     }
 
-    public static Rule<HeatmapRequest> verifyFromIsBeforeUntil() {
+    public static Rule<HttpRequest> verifyHeatmapJsonRequestSupportedQueryParameters() {
+        Rule<Collection<String>> rule = verifySupportedParameters(
+            "id", "from", "until");
+
+        return (request, errorState) ->
+            rule.accept(request.getQueryStringParameters().keySet(), errorState);
+    }
+
+    public static Rule<HeatmapRequest> verifyHeatmapRequestFromIsBeforeUntil() {
         return ValidationRules.<HeatmapRequest>requiredNotNull()
+            .and((request, consumer) -> {
+                if (!request.getFrom().isBefore(request.getUnit())) {
+                    consumer.accept("The field value should be before 'until' timestamp.");
+                }
+            })
+            .named("from");
+    }
+
+    public static Rule<HeatmapJsonRequest> verifyHeatmapJsonRequestFromIsBeforeUntil() {
+        return ValidationRules.<HeatmapJsonRequest>requiredNotNull()
             .and((request, consumer) -> {
                 if (!request.getFrom().isBefore(request.getUnit())) {
                     consumer.accept("The field value should be before 'until' timestamp.");

@@ -36,7 +36,7 @@ public class HeatmapFacade implements Facade<HeatmapRequest, HeatmapResponse> {
                     ValidationRules::verifyQueryParameterOpacity,
                     ValidationRules::verifyHeatmapRequestSupportedQueryParameters),
                 Arrays.asList(
-                    ValidationRules::verifyFromIsBeforeUntil,
+                    ValidationRules::verifyHeatmapRequestFromIsBeforeUntil,
                     ValidationRules::verifyOpacity,
                     ValidationRules::verifyRadius)),
             repository,

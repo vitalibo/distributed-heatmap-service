@@ -2,7 +2,9 @@ package com.github.vitalibo.hbase.api.infrastructure;
 
 import com.github.vitalibo.hbase.api.TestHelper;
 import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.hbase.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
+import com.github.vitalibo.hbase.api.core.model.HeatmapJsonResponse;
 import com.github.vitalibo.hbase.api.core.model.HeatmapResponse;
 import com.github.vitalibo.hbase.api.core.model.HttpRequest;
 import com.github.vitalibo.hbase.api.core.model.HttpResponse;
@@ -50,6 +52,8 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
     private PingFacade mockPingFacade;
     @Autowired
     private HeatmapFacade mockHeatmapFacade;
+    @Autowired
+    private HeatmapJsonFacade mockHeatmapJsonFacade;
     @Captor
     private ArgumentCaptor<HttpRequest> captorHttpRequest;
 
@@ -92,6 +96,7 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
                 ImageIO.read(TestHelper.resourceAsInputStream(TestHelper.resourcePath("heatmap.png"))))));
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Header-Trace-RequestId", "8a0cddd0-d93a-4170-9a7d-444c3b21f7de");
+        headers.set("Content-Type", "image/png");
 
         ResponseEntity<byte[]> actual = restClient.exchange(
             resourceUrl + "/heatmap?radius=32", HttpMethod.GET, new HttpEntity<>(headers), byte[].class);
@@ -115,6 +120,31 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
             }
             Assert.assertEquals(fis2.read(), -1);
         }
+    }
+
+    @Test
+    public void testHeatmapJson() {
+        Mockito.when(mockHeatmapJsonFacade.process(Mockito.any(HttpRequest.class)))
+            .thenReturn(new HttpResponse<>(200, new HeatmapJsonResponse(640, 480, null, null)
+                .withSparse(new double[][]{{0.0, 0.1, 0.2}, {1.0, 1.1, 1.2}, {2.0, 2.1, 2.2}, {3.0, 3.1, 3.2}})
+                .withDense(new double[][]{{0.0, 0.0, 0.0, 0.1, 0.2}, {0.0, 1.1, 0.0, 0.0, 1.2}, {2.1, 0.0, 2.2, 0.0, 2.3}})));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Header-Trace-RequestId", "41c5faab-5e10-4191-9894-f36482238ac3");
+
+        ResponseEntity<String> actual = restClient.exchange(
+            resourceUrl + "/heatmap?id=123", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+
+        Assert.assertNotNull(actual);
+        Assert.assertEquals(actual.getStatusCode(), HttpStatus.OK);
+        Assert.assertEquals(actual.getBody(),
+            TestHelper.resourceAsJson(TestHelper.resourcePath("Heatmap.json")));
+        Assert.assertEquals(actual.getHeaders().get("Request-Id"),
+            Collections.singletonList("41c5faab-5e10-4191-9894-f36482238ac3"));
+        Mockito.verify(mockHeatmapJsonFacade).process(captorHttpRequest.capture());
+        HttpRequest httpRequest = captorHttpRequest.getValue();
+        Assert.assertEquals(httpRequest.getPath(), "/v1/heatmap");
+        Assert.assertEquals(httpRequest.getHttpMethod(), "GET");
+        Assert.assertEquals(httpRequest.getQueryStringParameters(), Collections.singletonMap("id", "123"));
     }
 
     @Test
@@ -208,6 +238,11 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
         @Bean
         public HeatmapFacade createHeatmapFacade() {
             return Mockito.mock(HeatmapFacade.class);
+        }
+
+        @Bean
+        public HeatmapJsonFacade createHeatmapJsonFacade() {
+            return Mockito.mock(HeatmapJsonFacade.class);
         }
 
     }

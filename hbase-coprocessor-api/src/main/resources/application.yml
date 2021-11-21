@@ -1,3 +1,9 @@
+server:
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024
+
 spring:
   profiles:
     active: '@spring.profiles.active@'
@@ -22,3 +28,7 @@ hbase:
     quorum: "local-zookeeper.default.svc.cluster.local"
   heatmap:
     table-name: "HEATMAP"
+
+heatmap:
+  sparse:
+    threshold: 0.4

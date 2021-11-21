@@ -1,5 +1,6 @@
 package com.github.vitalibo.hbase.api.core;
 
+import com.github.vitalibo.hbase.api.core.model.HeatmapJsonRequest;
 import com.github.vitalibo.hbase.api.core.model.HeatmapRequest;
 import com.github.vitalibo.hbase.api.core.model.HttpRequest;
 import com.github.vitalibo.hbase.api.core.util.ErrorState;
@@ -397,6 +398,31 @@ public class ValidationRulesTest {
     }
 
     @DataProvider
+    public Object[][] sampleHeatmapJsonRequestSupportedQueryParameters() {
+        return new Object[][]{
+            {"id", null},
+            {"from", null},
+            {"until", null},
+            {"foo", errors("Unsupported parameter")},
+            {"form", errors("Unsupported parameter")}
+        };
+    }
+
+    @Test(dataProvider = "sampleHeatmapJsonRequestSupportedQueryParameters")
+    public void testVerifyHeatmapJsonRequestSupportedQueryParameters(String column, List<String> expected) {
+        HttpRequest request = new HttpRequest();
+        request.setQueryStringParameters(Collections.singletonMap(column, "foo"));
+        Rule<HttpRequest> rule = ValidationRules.verifyHeatmapJsonRequestSupportedQueryParameters();
+        ErrorState errorState = new ErrorState();
+
+        rule.accept(request, errorState);
+
+        Assert.assertEquals(errorState.hasErrors(), Objects.nonNull(expected));
+        Assert.assertTrue(errorState.size() <= 1);
+        Assert.assertEquals(errorState.get(column), expected);
+    }
+
+    @DataProvider
     public Object[][] sampleFromIsBeforeUntil() {
         return new Object[][]{
             {"2021-10-30T00:00:00Z", "2021-10-31T00:00:00Z", null},
@@ -407,11 +433,26 @@ public class ValidationRulesTest {
     }
 
     @Test(dataProvider = "sampleFromIsBeforeUntil")
-    public void testVerifyFromIsBeforeUntil(String from, String until, List<String> expected) {
+    public void testVerifyHeatmapRequestFromIsBeforeUntil(String from, String until, List<String> expected) {
         HeatmapRequest request = new HeatmapRequest();
         request.setFrom(LocalDateTime.parse(from, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         request.setUnit(LocalDateTime.parse(until, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        Rule<HeatmapRequest> rule = ValidationRules.verifyFromIsBeforeUntil();
+        Rule<HeatmapRequest> rule = ValidationRules.verifyHeatmapRequestFromIsBeforeUntil();
+        ErrorState errorState = new ErrorState();
+
+        rule.accept(request, errorState);
+
+        Assert.assertEquals(errorState.hasErrors(), Objects.nonNull(expected));
+        Assert.assertTrue(errorState.size() <= 1);
+        Assert.assertEquals(errorState.get("from"), expected);
+    }
+
+    @Test(dataProvider = "sampleFromIsBeforeUntil")
+    public void testVerifyHeatmapJsonRequestFromIsBeforeUntil(String from, String until, List<String> expected) {
+        HeatmapJsonRequest request = new HeatmapJsonRequest();
+        request.setFrom(LocalDateTime.parse(from, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        request.setUnit(LocalDateTime.parse(until, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        Rule<HeatmapJsonRequest> rule = ValidationRules.verifyHeatmapJsonRequestFromIsBeforeUntil();
         ErrorState errorState = new ErrorState();
 
         rule.accept(request, errorState);

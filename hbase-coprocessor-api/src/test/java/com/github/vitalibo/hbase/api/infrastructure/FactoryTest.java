@@ -1,6 +1,7 @@
 package com.github.vitalibo.hbase.api.infrastructure;
 
 import com.github.vitalibo.hbase.api.core.facade.HeatmapFacade;
+import com.github.vitalibo.hbase.api.core.facade.HeatmapJsonFacade;
 import com.github.vitalibo.hbase.api.core.facade.PingFacade;
 import com.github.vitalibo.hbase.api.infrastructure.springframework.HttpRequestMappingHandlerAdapter;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
@@ -47,6 +48,15 @@ public class FactoryTest {
         Address address = zookeeperCluster.getAddress();
         HeatmapFacade actual = factory.createHeatmapFacade(
             address.getHostname() + ":" + address.getPort(), "foo");
+
+        Assert.assertNotNull(actual);
+    }
+
+    @Test
+    public void testCreateHeatmapJsonFacade() {
+        Address address = zookeeperCluster.getAddress();
+        HeatmapJsonFacade actual = factory.createHeatmapJsonFacade(
+            address.getHostname() + ":" + address.getPort(), "foo", 0.5);
 
         Assert.assertNotNull(actual);
     }
