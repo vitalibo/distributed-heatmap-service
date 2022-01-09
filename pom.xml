@@ -12,19 +12,61 @@
     <modules>
         <module>heatmap-hbase</module>
         <module>heatmap-api</module>
+        <module>heatmap-loader</module>
     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <scala.version>2.12</scala.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hbase.version>2.4.4</hbase.version>
         <spring.boot.version>2.5.5</spring.boot.version>
+        <spark.version>3.1.2</spark.version>
+        <typesafe.config.version>1.4.1</typesafe.config.version>
         <lombok.version>1.18.20</lombok.version>
         <pmd.version>6.26.0</pmd.version>
         <testng.version>7.3.0</testng.version>
         <mockito.version>3.6.28</mockito.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.scope>compile</build.scope>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/profile/local</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>aws</id>
+            <properties>
+                <build.scope>provided</build.scope>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/profile/aws</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -41,6 +83,44 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_${scala.version}</artifactId>
+                <version>${spark.version}</version>
+                <scope>${build.scope}</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql_${scala.version}</artifactId>
+                <version>${spark.version}</version>
+                <scope>${build.scope}</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-hive_${scala.version}</artifactId>
+                <version>${spark.version}</version>
+                <scope>${build.scope}</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hbase</groupId>
+                <artifactId>hbase-mapreduce</artifactId>
+                <version>${hbase.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.github.vitalibo</groupId>
+                <artifactId>config_${typesafe.config.version}</artifactId>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -170,7 +250,7 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>vitalibo-mvnrepo</id>
+            <id>com.github.vitalibo.mvn</id>
             <url>https://raw.github.com/vitalibo/public-maven-repository/release/</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -178,5 +258,16 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>com.github.vitalibo.mvn</id>
+            <url>https://raw.github.com/vitalibo/public-maven-repository/release/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>

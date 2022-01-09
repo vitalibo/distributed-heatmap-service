@@ -1,0 +1,9 @@
+hbase:
+  zookeeper:
+    quorum: "local-zookeeper.default.svc.cluster.local"
+
+spark:
+  app: "Heatmap Loader"
+  master: "local[*]"
+  config:
+    "spark.shuffle.service.enabled": "false"

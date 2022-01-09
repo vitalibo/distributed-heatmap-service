@@ -1,0 +1,14 @@
+hbase:
+  zookeeper:
+    quorum: "${ZOOKEEPER_QUORUM}"
+
+spark:
+  config:
+    "hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
+    "spark.sql.hive.caseSensitiveInferenceMode": "NEVER_INFER"
+    "spark.sql.hive.verifyPartitionPath": "false"
+    "spark.shuffle.service.enabled": "true"
+    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version": "2"
+    "spark.hadoop.mapreduce.fileoutputcommitter.cleanup-failures.ignored": "true"
+    "spark.sql.parquet.fs.optimized.committer.optimization-enabled": "true"
+    "spark.sql.parquet.output.committer.class": "com.amazon.emr.committer.EmrOptimizedSparkSqlParquetOutputCommitter"

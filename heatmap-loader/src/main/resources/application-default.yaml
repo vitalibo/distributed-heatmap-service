@@ -1,0 +1,12 @@
+hbase:
+  zookeeper:
+    quorum: null
+  heatmap:
+    table-name: "HEATMAP"
+    coprocessor: "com.github.vitalibo.heatmap.hbase.HeatmapAggregationRegionCoprocessor"
+    column-families:
+      - "DATA"
+      - "META"
+
+spark:
+  config: null
