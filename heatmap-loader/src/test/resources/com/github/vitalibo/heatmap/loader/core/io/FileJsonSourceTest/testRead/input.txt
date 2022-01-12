@@ -1,0 +1,3 @@
+{"str":"foo"}
+{"str":"bar"}
+{"str":"taz"}

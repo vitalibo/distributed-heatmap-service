@@ -24,6 +24,8 @@
         <spring.boot.version>2.5.5</spring.boot.version>
         <spark.version>3.1.2</spark.version>
         <typesafe.config.version>1.4.1</typesafe.config.version>
+        <jackson.version>2.12.5</jackson.version>
+        <janino.version>3.0.16</janino.version>
         <lombok.version>1.18.20</lombok.version>
         <pmd.version>6.26.0</pmd.version>
         <testng.version>7.3.0</testng.version>
@@ -71,6 +73,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase</artifactId>
                 <version>${hbase.version}</version>
@@ -95,6 +104,12 @@
                 <artifactId>spark-sql_${scala.version}</artifactId>
                 <version>${spark.version}</version>
                 <scope>${build.scope}</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>janino</artifactId>
+                        <groupId>org.codehaus.janino</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
@@ -122,6 +137,12 @@
                 <artifactId>config_${typesafe.config.version}</artifactId>
                 <version>1.0.0</version>
             </dependency>
+            <!-- spark-sql 3.1.2 @ java.lang.NoClassDefFoundError: org/codehaus/janino/InternalCompilerException -->
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>janino</artifactId>
+                <version>${janino.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -144,6 +165,12 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-testing-util</artifactId>
                 <version>${hbase.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.holdenkarau</groupId>
+                <artifactId>spark-testing-base_${scala.version}</artifactId>
+                <version>${spark.version}_1.1.1</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

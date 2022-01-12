@@ -19,6 +19,9 @@ public class Driver {
     public void run(String[] args) {
         final Job job;
         switch (args[0]) {
+            case "word_count":
+                job = factory.createWordCountJob(args);
+                break;
             case "generate":
                 job = factory.createGenerateJob(args);
                 break;

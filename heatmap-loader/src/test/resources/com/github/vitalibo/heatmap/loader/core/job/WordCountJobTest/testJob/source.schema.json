@@ -1,0 +1,11 @@
+{
+  "type": "struct",
+  "fields": [
+    {
+      "name": "text",
+      "type": "string",
+      "nullable": true,
+      "metadata": {}
+    }
+  ]
+}

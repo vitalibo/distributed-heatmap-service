@@ -1,0 +1,17 @@
+{
+  "type": "struct",
+  "fields": [
+    {
+      "name": "word",
+      "type": "string",
+      "nullable": true,
+      "metadata": {}
+    },
+    {
+      "name": "count",
+      "type": "long",
+      "nullable": false,
+      "metadata": {}
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "word": "bye",
+    "count": 1
+  },
+  {
+    "word": "goodbye",
+    "count": 1
+  },
+  {
+    "word": "hello",
+    "count": 2
+  },
+  {
+    "word": "spark",
+    "count": 2
+  },
+  {
+    "word": "world",
+    "count": 2
+  }
+]

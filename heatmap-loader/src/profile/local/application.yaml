@@ -7,3 +7,10 @@ spark:
   master: "local[*]"
   config:
     "spark.shuffle.service.enabled": "false"
+
+job:
+  word-count:
+    source:
+      path: "input.json"
+    sink:
+      path: "output"

@@ -10,3 +10,10 @@ hbase:
 
 spark:
   config: null
+
+job:
+  word-count:
+    source:
+      path: null
+    sing:
+      path: null
