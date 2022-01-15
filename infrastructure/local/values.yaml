@@ -35,6 +35,16 @@ nodeSelector: { }
 tolerations: [ ]
 affinity: { }
 
+spark:
+  enabled: false
+  image:
+    repository: "heatmap-loader"
+    pullPolicy: IfNotPresent
+    tag: ""
+  container:
+    args:
+      - "generate"
+
 hbase:
   image:
     repository: "heatmap-hbase"

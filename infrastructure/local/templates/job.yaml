@@ -1,0 +1,25 @@
+{{- if .Values.spark.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "local.fullname" . }}
+  labels:
+    {{- include "local.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: {{ include "local.fullname" . }}
+      labels:
+        {{- include "local.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: heatmap-loader
+          image: "{{ .Values.spark.image.repository }}:{{ .Values.spark.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.spark.image.pullPolicy }}
+          args: {{ .Values.spark.container.args }}
+{{- end -}}

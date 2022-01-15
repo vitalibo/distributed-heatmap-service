@@ -14,7 +14,6 @@
 
     <properties>
         <start-class>com.github.vitalibo.heatmap.api.Application</start-class>
-        <dockerImage.tag>maven</dockerImage.tag>
     </properties>
 
     <dependencies>
@@ -72,17 +71,6 @@
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
@@ -92,7 +80,7 @@
                         <image>adoptopenjdk:11.0.10_9-jre-hotspot</image>
                     </from>
                     <to>
-                        <image>${project.artifactId}:${dockerImage.tag}</image>
+                        <image>${project.artifactId}:maven</image>
                     </to>
                 </configuration>
                 <executions>

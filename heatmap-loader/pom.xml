@@ -74,14 +74,23 @@
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
                 <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <from>
+                        <image>adoptopenjdk:11.0.10_9-jre-hotspot</image>
+                    </from>
+                    <to>
+                        <image>${project.artifactId}:maven</image>
+                    </to>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <goals>
-                            <goal>delombok</goal>
+                            <goal>dockerBuild</goal>
                         </goals>
                     </execution>
                 </executions>
