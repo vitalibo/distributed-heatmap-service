@@ -1,0 +1,25 @@
+{
+  "type": "struct",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string",
+      "nullable": true,
+      "metadata": {}
+    },
+    {
+      "name": "heatmap",
+      "type": {
+        "type": "array",
+        "elementType": {
+          "type": "array",
+          "elementType": "double",
+          "containsNull": true
+        },
+        "containsNull": true
+      },
+      "nullable": true,
+      "metadata": {}
+    }
+  ]
+}

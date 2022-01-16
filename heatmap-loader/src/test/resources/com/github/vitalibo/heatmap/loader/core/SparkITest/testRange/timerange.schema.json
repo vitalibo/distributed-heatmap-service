@@ -1,0 +1,11 @@
+{
+  "type": "struct",
+  "fields": [
+    {
+      "name": "value",
+      "type": "timestamp",
+      "nullable": true,
+      "metadata": {}
+    }
+  ]
+}

@@ -7,6 +7,16 @@ hbase:
     column-families:
       - "DATA"
       - "META"
+    schema:
+      metadata:
+        family: "META"
+        qualifiers:
+          width: "W"
+          height: "H"
+      data:
+        family: "DATA"
+        qualifiers:
+          heatmap: "HM"
 
 spark:
   config: null
@@ -17,3 +27,23 @@ job:
       path: null
     sing:
       path: null
+  generate:
+    dimension:
+      width: 640
+      height: 480
+    timerange:
+      lower: "2022-01-01T00:00:00"
+      upper: "2022-01-02T00:00:01"
+    labels:
+      lower: 1
+      upper: 5
+    strategy:
+      random:
+        dense: 0.8
+        min: 0.0
+        max: 10.0
+      perlin_noise:
+        stretch: 3.0
+        min: 0.0
+        max: 255
+        pow: 8.0

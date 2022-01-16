@@ -44,6 +44,7 @@ spark:
   container:
     args:
       - "generate"
+      - "perlin_noise"
 
 hbase:
   image:

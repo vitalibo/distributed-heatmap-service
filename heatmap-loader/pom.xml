@@ -63,6 +63,10 @@
             <groupId>com.holdenkarau</groupId>
             <artifactId>spark-testing-base_${scala.version}</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-testing-util</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

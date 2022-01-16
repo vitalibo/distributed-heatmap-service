@@ -21,5 +21,8 @@ spec:
         - name: heatmap-loader
           image: "{{ .Values.spark.image.repository }}:{{ .Values.spark.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.spark.image.pullPolicy }}
-          args: {{ .Values.spark.container.args }}
+          {{- with .Values.spark.container.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
 {{- end -}}

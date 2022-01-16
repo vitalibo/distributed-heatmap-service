@@ -1,0 +1,14 @@
+root
+ |-- str: string (nullable = false)
+ |-- int: integer (nullable = true)
+
+
++---+----+
+|str|int |
++---+----+
+|foo|123 |
+|bar|null|
+|taz|321 |
++---+----+
+
+
