@@ -30,10 +30,11 @@ public class HeatmapAggregationRegionCoprocessor implements RegionCoprocessor, R
     }
 
     @Override
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public boolean postScannerNext(ObserverContext<RegionCoprocessorEnvironment> context, InternalScanner scanner,
                                    List<Result> results, int limit, boolean hasNext) throws IOException {
-        final long measurementStartTime = System.currentTimeMillis();
-        int measureAggregatedHeatmaps = 0;
+        final long measurementStartTime = System.currentTimeMillis(); // NOPMD
+        int measureAggregatedHeatmaps = 0; // NOPMD
 
         final List<Cell> cells = new ArrayList<>();
         results.forEach(result -> cells.addAll(result.listCells()));
