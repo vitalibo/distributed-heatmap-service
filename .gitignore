@@ -6,3 +6,5 @@
 *Run.java
 Chart.lock
 charts/
+.terraform/
+.terraform.lock.hcl

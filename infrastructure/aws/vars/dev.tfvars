@@ -1,0 +1,25 @@
+region                     = "us-west-2"
+namespace                  = "vb"
+environment                = "dev"
+name                       = "dist-heatmap-srv"
+bucket                     = "vitalibo-sandbox-us-west-2"
+emr_release_label          = "emr-6.5.0"
+vpc_id                     = "vpc-f1c29f95"
+terraform_backend          = "terraform-backend-us-west-2"
+key_name                   = "my_26.02.2022"
+master_allowed_cidr_blocks = ["91.231.41.10/32"]
+public_subnets             = ["subnet-cae02de1", "subnet-d98a2b81"]
+private_subnets            = ["subnet-018a41d656cae891e"]
+image_repository_name      = "heatmap-api"
+master_instance_type       = "m4.large"
+master_bid_price           = 0.04
+master_ebs_size            = 32
+master_ebs_type            = "gp2"
+core_instance_type         = "m4.large"
+core_bid_price             = 0.04
+core_ebs_size              = 64
+core_ebs_type              = "gp2"
+tags                       = {
+  Project = "Distributed Heatmap Service"
+  Owner   = "Vitaliy Boyarsky"
+}
