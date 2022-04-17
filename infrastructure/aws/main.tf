@@ -6,206 +6,44 @@ locals {
   }, var.tags)
 }
 
-
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
-
-
-data "aws_iam_policy_document" "emr_assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["elasticmapreduce.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "emr_service_role" {
-  name               = "${local.full_name}-emr-role"
-  assume_role_policy = data.aws_iam_policy_document.emr_assume_role.json
-  tags               = local.tags
-}
-
-resource "aws_iam_role_policy_attachment" "emr_service_role" {
-  role       = aws_iam_role.emr_service_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
-}
-
-data "aws_iam_policy_document" "ec2_assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role" "emr_ec2_role" {
-  name               = "${local.full_name}-emr-ec2-role"
-  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
-  tags               = local.tags
-}
-
-resource "aws_iam_role_policy_attachment" "emr_ec2_role" {
-  role       = aws_iam_role.emr_ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
-}
-
-resource "aws_iam_instance_profile" "emr_ec2_instance_profile" {
-  name = "${local.full_name}-emr-ec2-instance-profile"
-  role = aws_iam_role.emr_ec2_role.name
-  tags = local.tags
-}
-
-
-resource "aws_security_group" "master" {
-  revoke_rules_on_delete = true
-  name                   = "${local.full_name}-master"
-  vpc_id                 = var.vpc_id
-  description            = "Allow inbound traffic and outbound traffic for EMR cluster master node."
-  tags                   = local.tags
-}
-
-resource "aws_security_group_rule" "master_ingress_security_groups" {
-  count                    = length(var.master_allowed_security_groups)
-  type                     = "ingress"
-  description              = "Allow all inbound traffic from Security Groups."
-  from_port                = 0
-  to_port                  = 65535
-  protocol                 = "tcp"
-  source_security_group_id = var.master_allowed_security_groups[count.index]
-  security_group_id        = aws_security_group.master.id
-}
-
-resource "aws_security_group_rule" "master_ingress_security_groups1" {
-  type                     = "ingress"
-  description              = "Allow all inbound traffic from Security Groups."
-  from_port                = 0
-  to_port                  = 65535
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.api_sg.id
-  security_group_id        = aws_security_group.master.id
-}
-
-resource "aws_security_group_rule" "master_ingress_cidr_blocks" {
-  count             = length(var.master_allowed_cidr_blocks) > 0 ? 1 : 0
-  description       = "Allow all inbound traffic from CIDR blocks."
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  cidr_blocks       = var.master_allowed_cidr_blocks
-  security_group_id = aws_security_group.master.id
-}
-
-resource "aws_security_group_rule" "master_egress" {
-  description       = "Allow all egress traffic."
-  type              = "egress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
-  security_group_id = aws_security_group.master.id
-}
-
-resource "aws_security_group" "slave" {
-  revoke_rules_on_delete = true
-  name                   = "${local.full_name}-slave"
-  vpc_id                 = var.vpc_id
-  description            = "Allow inbound traffic and outbound traffic for EMR cluster slave node."
-  tags                   = local.tags
-}
-
-resource "aws_security_group_rule" "slave_ingress_security_groups" {
-  count                    = length(var.slave_allowed_security_groups)
-  type                     = "ingress"
-  description              = "Allow all inbound traffic from Security Groups."
-  from_port                = 0
-  to_port                  = 65535
-  protocol                 = "tcp"
-  source_security_group_id = var.slave_allowed_security_groups[count.index]
-  security_group_id        = aws_security_group.slave.id
-}
-
-resource "aws_security_group_rule" "slave_ingress_security_groups2" {
-  type                     = "ingress"
-  description              = "Allow all inbound traffic from Security Groups."
-  from_port                = 0
-  to_port                  = 65535
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.api_sg.id
-  security_group_id        = aws_security_group.slave.id
-}
-
-resource "aws_security_group_rule" "slave_ingress_cidr_blocks" {
-  count             = length(var.slave_allowed_cidr_blocks) > 0 ? 1 : 0
-  description       = "Allow all inbound traffic from CIDR blocks."
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  cidr_blocks       = var.slave_allowed_cidr_blocks
-  security_group_id = aws_security_group.slave.id
-}
-
-resource "aws_security_group_rule" "slave_egress" {
-  description       = "Allow all egress traffic."
-  type              = "egress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.slave.id
-}
-
-
-resource "aws_s3_object" "heatmap_hbase_jar" {
+resource "aws_s3_object" "src_heatmap_hbase" {
   bucket = var.bucket
   key    = "${var.environment}/${var.name}/heatmap-hbase-1.0-SNAPSHOT.jar"
   source = "${path.module}/../../heatmap-hbase/target/heatmap-hbase-1.0-SNAPSHOT.jar"
 }
 
-resource "aws_s3_object" "heatmap_loader_jar" {
+resource "aws_s3_object" "src_heatmap_loader" {
   bucket = var.bucket
   key    = "${var.environment}/${var.name}/heatmap-loader-1.0-SNAPSHOT.jar"
   source = "${path.module}/../../heatmap-loader/target/heatmap-loader-1.0-SNAPSHOT.jar"
 }
 
-resource "aws_s3_object" "bootstrap_script" {
+resource "aws_s3_object" "src_bootstrap" {
   bucket  = var.bucket
   key     = "${var.environment}/${var.name}/bootstrap.sh"
   content = <<EOT
 #!/bin/sh
 set -e
 
-sudo aws s3 cp "s3://${aws_s3_object.heatmap_hbase_jar.bucket}/${aws_s3_object.heatmap_hbase_jar.key}" "/usr/lib/hbase/lib/"
-aws s3 cp "s3://${aws_s3_object.heatmap_loader_jar.bucket}/${aws_s3_object.heatmap_loader_jar.key}" "/home/hadoop/"
+sudo aws s3 cp "s3://${aws_s3_object.src_heatmap_hbase.bucket}/${aws_s3_object.src_heatmap_hbase.key}" "/usr/lib/hbase/lib/"
+aws s3 cp "s3://${aws_s3_object.src_heatmap_loader.bucket}/${aws_s3_object.src_heatmap_loader.key}" "/home/hadoop/"
 EOT
 }
 
-resource "aws_emr_cluster" "this" {
+
+resource "aws_emr_cluster" "emr" {
   name          = "${local.full_name}-cluster"
   release_label = var.emr_release_label
-  service_role  = aws_iam_role.emr_service_role.id
+  service_role  = aws_iam_role.emr_role.id
   applications  = ["Spark", "HBase", "Livy"]
   log_uri       = "s3://${var.bucket}/${var.environment}/${var.name}/emr_logs/"
   tags          = local.tags
 
   ec2_attributes {
     key_name                          = var.key_name
-    subnet_id                         = var.public_subnets[1]
-    emr_managed_master_security_group = aws_security_group.master.id
-    emr_managed_slave_security_group  = aws_security_group.slave.id
+    subnet_id                         = var.private_subnets[1]
+    emr_managed_master_security_group = aws_security_group.emr_master_sg.id
+    emr_managed_slave_security_group  = aws_security_group.emr_slave_sg.id
     instance_profile                  = aws_iam_instance_profile.emr_ec2_instance_profile.arn
   }
 
@@ -285,8 +123,141 @@ resource "aws_emr_cluster" "this" {
 
   bootstrap_action {
     name = "Copy heatmap-hbase jar from S3"
-    path = "s3://${aws_s3_object.bootstrap_script.bucket}/${aws_s3_object.bootstrap_script.key}"
+    path = "s3://${aws_s3_object.src_bootstrap.bucket}/${aws_s3_object.src_bootstrap.key}"
   }
+}
+
+data "aws_iam_policy_document" "emr_assume_role_policy_document" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["elasticmapreduce.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "emr_role" {
+  name               = "${local.full_name}-emr-role"
+  assume_role_policy = data.aws_iam_policy_document.emr_assume_role_policy_document.json
+  tags               = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "emr_role" {
+  role       = aws_iam_role.emr_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
+}
+
+data "aws_iam_policy_document" "ec2_assume_role_policy_document" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "emr_ec2_role" {
+  name               = "${local.full_name}-emr-ec2-role"
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role_policy_document.json
+  tags               = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "emr_ec2_role_policy_attachment" {
+  role       = aws_iam_role.emr_ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
+}
+
+resource "aws_iam_instance_profile" "emr_ec2_instance_profile" {
+  name = "${local.full_name}-emr-ec2-instance-profile"
+  role = aws_iam_role.emr_ec2_role.name
+  tags = local.tags
+}
+
+resource "aws_security_group" "emr_master_sg" {
+  revoke_rules_on_delete = true
+  name                   = "${local.full_name}-master"
+  vpc_id                 = var.vpc_id
+  description            = "Allow inbound traffic and outbound traffic for EMR cluster master node."
+  tags                   = local.tags
+}
+
+resource "aws_security_group_rule" "emr_master_sg_ingress" {
+  description              = "Allow all inbound traffic from API Security Group."
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.api_sg.id
+  security_group_id        = aws_security_group.emr_master_sg.id
+}
+
+resource "aws_security_group_rule" "emr_master_sg_ingress_cidr_blocks" {
+  count             = length(var.emr_allowed_cidr_blocks) > 0 ? 1 : 0
+  description       = "Allow all inbound traffic from CIDR blocks."
+  protocol          = "tcp"
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 65535
+  cidr_blocks       = var.emr_allowed_cidr_blocks
+  security_group_id = aws_security_group.emr_master_sg.id
+}
+
+resource "aws_security_group_rule" "emr_master_sg_egress" {
+  description       = "Allow all egress traffic."
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 0
+  to_port           = 65535
+  cidr_blocks       = ["0.0.0.0/0"]
+  ipv6_cidr_blocks  = ["::/0"]
+  security_group_id = aws_security_group.emr_master_sg.id
+}
+
+resource "aws_security_group" "emr_slave_sg" {
+  revoke_rules_on_delete = true
+  name                   = "${local.full_name}-slave"
+  vpc_id                 = var.vpc_id
+  description            = "Allow inbound traffic and outbound traffic for EMR cluster slave node."
+  tags                   = local.tags
+}
+
+resource "aws_security_group_rule" "emr_slave_sg_ingress" {
+  description              = "Allow all inbound traffic from API Security Group."
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 0
+  to_port                  = 65535
+  source_security_group_id = aws_security_group.api_sg.id
+  security_group_id        = aws_security_group.emr_slave_sg.id
+}
+
+resource "aws_security_group_rule" "emr_slave_sg_ingress_cidr_blocks" {
+  count             = length(var.emr_allowed_cidr_blocks) > 0 ? 1 : 0
+  description       = "Allow all inbound traffic from CIDR blocks."
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 0
+  to_port           = 65535
+  cidr_blocks       = var.emr_allowed_cidr_blocks
+  security_group_id = aws_security_group.emr_slave_sg.id
+}
+
+resource "aws_security_group_rule" "emr_slave_sg_egress" {
+  description       = "Allow all egress traffic."
+  type              = "egress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.emr_slave_sg.id
 }
 
 
@@ -340,7 +311,7 @@ resource "aws_ecs_task_definition" "api_task_definition" {
       }
       environment = [
         {
-          "name" = "HBASE_ZOOKEEPER_QUORUM", "value" = aws_emr_cluster.this.master_public_dns
+          "name" = "HBASE_ZOOKEEPER_QUORUM", "value" = aws_emr_cluster.emr.master_public_dns
         }
       ]
     }

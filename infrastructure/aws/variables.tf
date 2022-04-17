@@ -45,33 +45,15 @@ variable "vpc_id" {
   description = "(Required) VPC Id."
 }
 
-variable "master_allowed_security_groups" {
+variable "emr_allowed_cidr_blocks" {
   type        = list(string)
-  description = "(Optional) List of Security Groups to allow access to master node."
-  default     = []
-}
-
-variable "master_allowed_cidr_blocks" {
-  type        = list(string)
-  description = "(Optional) List of CIDR blocks to allow access to master node."
-  default     = []
-}
-
-variable "slave_allowed_security_groups" {
-  type        = list(string)
-  description = "(Optional) List of Security Groups to allow access to slave nodes."
+  description = "(Optional) List of CIDR blocks to allow access to EMR nodes."
   default     = []
 }
 
 variable "emr_release_label" {
   type        = string
   description = "(Required) Release label for the Amazon EMR release."
-}
-
-variable "slave_allowed_cidr_blocks" {
-  type        = list(string)
-  description = "(Optional) List of CIDR blocks to allow access to slave nodes."
-  default     = []
 }
 
 variable "key_name" {
@@ -81,18 +63,13 @@ variable "key_name" {
 
 variable "public_subnets" {
   type        = list(string)
-  description = ""
+  description = "(Required) List of VPC subnet ids that's associated with a route table that has a route to an internet gateway."
 }
 
 variable "private_subnets" {
   type        = list(string)
-  description = ""
+  description = "(Required) List of VPC subnet ids that's don't have access from internet."
 }
-#
-#variable "subnet_id" {
-#  type        = string
-#  description = "(Required) VPC subnet id where you want the job flow to launch."
-#}
 
 variable "master_instance_type" {
   type        = string
@@ -180,19 +157,19 @@ variable "core_ebs_volumes_per_instance" {
   default     = 1
 }
 
-variable "image_repository_url" {
-  type        = string
-  description = ""
-}
-
 variable "image_repository_name" {
   type        = string
-  description = ""
+  description = "(Required) The ECR image name used to start a API container."
+}
+
+variable "image_repository_url" {
+  type        = string
+  description = "(Internal) The ECR image url used to start a API container."
 }
 
 variable "image_tag" {
   type        = string
-  description = ""
+  description = "(Internal) The ECR image tag used to start a API container."
 }
 
 variable "tags" {
