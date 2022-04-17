@@ -1,6 +1,6 @@
 hbase:
   zookeeper:
-    quorum: "${ZOOKEEPER_QUORUM}"
+    quorum: "localhost"
 
 spark:
   config:

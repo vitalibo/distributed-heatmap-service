@@ -62,7 +62,7 @@ public class Factory {
                     (first, second) -> first.setAll(JavaConverters.collectionAsScalaIterable(Arrays.asList(second.getAll()))))))
             .enableHiveSupport();
 
-        final String name = config.getString("spark.app");
+        final String name = config.getString("spark.app.name");
         if (Objects.nonNull(name)) {
             builder.appName(name);
         }

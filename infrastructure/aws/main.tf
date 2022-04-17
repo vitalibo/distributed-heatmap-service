@@ -169,12 +169,29 @@ resource "aws_security_group_rule" "slave_egress" {
 }
 
 
-resource "aws_s3_object" "jar" {
+resource "aws_s3_object" "heatmap_hbase_jar" {
   bucket = var.bucket
   key    = "${var.environment}/${var.name}/heatmap-hbase-1.0-SNAPSHOT.jar"
   source = "${path.module}/../../heatmap-hbase/target/heatmap-hbase-1.0-SNAPSHOT.jar"
 }
 
+resource "aws_s3_object" "heatmap_loader_jar" {
+  bucket = var.bucket
+  key    = "${var.environment}/${var.name}/heatmap-loader-1.0-SNAPSHOT.jar"
+  source = "${path.module}/../../heatmap-loader/target/heatmap-loader-1.0-SNAPSHOT.jar"
+}
+
+resource "aws_s3_object" "bootstrap_script" {
+  bucket  = var.bucket
+  key     = "${var.environment}/${var.name}/bootstrap.sh"
+  content = <<EOT
+#!/bin/sh
+set -e
+
+sudo aws s3 cp "s3://${aws_s3_object.heatmap_hbase_jar.bucket}/${aws_s3_object.heatmap_hbase_jar.key}" "/usr/lib/hbase/lib/"
+aws s3 cp "s3://${aws_s3_object.heatmap_loader_jar.bucket}/${aws_s3_object.heatmap_loader_jar.key}" "/home/hadoop/"
+EOT
+}
 
 resource "aws_emr_cluster" "this" {
   name          = "${local.full_name}-cluster"
@@ -220,6 +237,42 @@ resource "aws_emr_cluster" "this" {
     }
   }
 
+  configurations_json = jsonencode([
+    {
+      Classification = "hbase-site"
+      Properties     = {
+        "hbase.table.sanity.checks" = "false"
+      }
+    }, {
+      Classification = "yarn-site"
+      Properties     = {
+        "yarn.resourcemanager.scheduler.class" = "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
+      }
+    }, {
+      Classification = "capacity-scheduler"
+      Properties     = {
+        "yarn.scheduler.capacity.resource-calculator" = "org.apache.hadoop.yarn.util.resource.DominantResourceCalculator"
+      }
+    }, {
+      Classification = "spark-hive-site"
+      Properties     = {
+        "hive.metastore.client.factory.class" = "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
+      }
+    }, {
+      Classification = "livy-conf"
+      Properties     = {
+        "livy.spark.deploy-mode"     = "cluster"
+        "livy.impersonation.enabled" = "true"
+      }
+    }, {
+      Classification = "core-site"
+      Properties     = {
+        "hadoop.proxyuser.livy.groups" = "*"
+        "hadoop.proxyuser.livy.hosts"  = "*"
+      }
+    }
+  ])
+
   step {
     action_on_failure = "CANCEL_AND_WAIT"
     name              = "Setup Hadoop Debugging"
@@ -230,16 +283,9 @@ resource "aws_emr_cluster" "this" {
     }
   }
 
-  step {
-    action_on_failure = "CANCEL_AND_WAIT"
-    name              = "Copy heatmap-hbase jar from S3"
-
-    hadoop_jar_step {
-      jar  = "command-runner.jar"
-      args = [
-        "sudo", "aws", "s3", "cp", "s3://${aws_s3_object.jar.bucket}/${aws_s3_object.jar.key}", "/usr/lib/hbase/"
-      ]
-    }
+  bootstrap_action {
+    name = "Copy heatmap-hbase jar from S3"
+    path = "s3://${aws_s3_object.bootstrap_script.bucket}/${aws_s3_object.bootstrap_script.key}"
   }
 }
 

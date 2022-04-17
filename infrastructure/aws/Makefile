@@ -55,11 +55,11 @@ init:
 
 .PHONY: package
 package:
-	#JAVA_HOME=$(JAVA_HOME) mvn clean package -P aws -Dmaven.test.skip=true -f $(CURDIR)/../../pom.xml
-	#docker build -t "$(image):$(tag)" $(CURDIR)/../../heatmap-api/
-	#aws ecr get-login-password --profile $(profile) | docker login --username AWS --password-stdin $(image)
-	#docker push "$(image):$(tag)"
-	#docker logout
+	JAVA_HOME=$(JAVA_HOME) mvn clean package -P aws -Dmaven.test.skip=true -f $(CURDIR)/../../pom.xml
+	docker build -t "$(image):$(tag)" $(CURDIR)/../../heatmap-api/
+	aws ecr get-login-password --profile $(profile) | docker login --username AWS --password-stdin $(image)
+	docker push "$(image):$(tag)"
+	docker logout
 
 .PHONY: plan
 plan: configure init package
