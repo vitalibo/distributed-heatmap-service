@@ -11,3 +11,9 @@ flowchart LR
     Loader -. Put .-> HBase
     style Loader stroke-dasharray: 5 5
 ```
+
+Example generated heatmap using Perlin noise.
+
+<p align="center">
+  <img width="640" height="480" src="integration/response.gif">
+</p>
