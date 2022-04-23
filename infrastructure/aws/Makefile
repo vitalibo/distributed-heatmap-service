@@ -13,7 +13,7 @@ image := $(shell aws ecr describe-repositories \
     --query 'repositories[0].repositoryUri' \
     --profile $(profile) \
     --output text)
-tag := foo
+tag := $(shell date +%s)
 
 # With JDK 1.8 following error is present when compile heatmap-loader module:
 #   Lombok annotation handler class lombok.javac.handlers.HandleDelegate failed on com/github/vitalibo/heatmap/loader/core/Spark.java:
